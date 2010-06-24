@@ -1,0 +1,150 @@
+#!/usr/bin/python
+# -*-encoding:utf8-*-
+
+from random import randint, randrange, choice
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option('-m', '--maxlenght', dest='len', action='store',
+                        type='int', help= 'Lenght of passwords', default=12)
+parser.add_option('-n', dest='number', action='store', type='int',
+                        help='numbero of passwords to generate',default=20)
+parser.add_option('-s', '--salt', dest='do_salt', action='store_true',
+                        help='Add intersyllab salt', default=False)
+parser.add_option('--salt-type', dest='salt_type', action='store',
+                        type='choice', help='type of salt from numeric, symbol, both',
+                        default='both', choices=('numeric','symbol','both'))
+parser.add_option('--salt-percent', dest= 'salt_percent', action='store',
+                        type='int', help='Percent of have a character intersected each syllab',
+                        default=20)
+parser.add_option('-l', '--leet', dest='do_leet', action='store_true',
+                        help='post leet filter (p057 1337 {i[73r)',
+                        default=False)
+parser.add_option('--leet-percent', dest='leet_percent', action='store',
+                        type='int', help='percent of have a suitable character \
+                        leetscripted, note that leet scripted passwords my be \
+                        longer than max length in raw characters as one normal \
+                        character can be represented by several others',
+                        default=20)
+parser.add_option('-u','--upercase', dest='do_upper',
+                        action='store_true', help='Percent of get a suitable character uppercased',
+                        default=False)
+parser.add_option('--upercase-percent', dest='upper_percent',
+                        action='store', type='int', help='Percent of get a suitable character uppercased',
+                        default=20)
+
+
+
+(options, args) = parser.parse_args()
+
+
+
+special_roots  = ['qu','g','gu']
+standard_roots = ['','r','t','y','p','s','d','f','h','j','l','c','v','b','n','m']
+composed_roots = ['tr','pr','pl','fr','gr','gl','cr','br','bl']
+normal_vocals = ['a','e','i','o','u']
+g_vocals = ['a','e','i','o']
+gu_vocals = ['e','i']
+qu_vocals = gu_vocals
+diptongs = ['ae','ai','ao','au','ei','eo','ia','ie','io','iu','ou','ua','ue']
+tails =['r','p','s','d','l','n','c','m','ms','ns','']
+
+symbol_salt = ['!','"','·','$','%','&','/','(',')','=','?','\\',
+               '|','@','#','~','¬',"'",'^','*','+','[',']','{','}',
+               ';',':','_',',','.','-','<','>']
+
+numeric_salt = ['0','1','2','3','4','5','6','7','8','9']
+l337_d1c7 = {
+    'a': ['4','/\\','@','/-\\'],
+    'b': ['8','6','13','I3','|3'],
+    'c': ['[','{','(','<'],
+    'd': [')','|)','])','0'],
+    'e': ['3','&','[-'],
+    'f': [']=','}','|='],
+    'g': ['6','&','9','C-'],
+    'h': ['/-/','[-]','}{','#'],
+    'i': ['1','!','|',']['],
+    'j': ['_|','_/',']'],
+    'k': ['|X','|x','|<','|{'],
+    'l': ['1','|','|_'],
+    'm': ['|v|',']V[','(T)','[V]','//\\\\//\\\\','|\\/|','/\\/\\','(V)','(\\/)','/|\\','//.'],
+    'n': ['/\\/','|\\|', '(\\)', '/|/', '[\\]', '{\\}', '][\\][', '[]\\[]'],
+    'o': ['0', '()', '<>', '*', '[[]]'],
+    'p': ['|D', '|*', '|>'],
+    'q': ['(,)','*|'],
+    'r': ['|2'],
+    's': ['5','$'],
+    't': ['7','+',"'|'","']'"],
+    'u': ['(_)', '|_|', '\\_\\', '/_/', '\\_/'],
+    'v': ['\\/' , '\\\\//'],
+    'w': ['\\/\\/', '|/\\|', '[/\\]', '(/\\)', 'VV', '///', '\\\\/\\//'],
+    'x': ['><', '}{', ')(','%'],
+    'y': ["'/", '%'],
+    'z': ['2','7_']
+}
+
+def randl337er(word,percent):
+    result = ''
+    for char in word:
+        if randrange(1,100) < percent:
+            if char.lower() in l337_d1c7.keys():
+                result += choice(l337_d1c7[char.lower()])
+            else:
+                result += char
+        else:
+            result += char
+    return result
+
+def randcapitalize(word,percent):
+    result = ''
+    for char in word:
+        if randrange(1,100) < percent:
+            result += char.upper()
+        else:
+            result += char
+    return result
+
+def syllab(previous=''):
+    if randrange(1,100) < 80:
+        root = choice(standard_roots + special_roots)
+    else:
+        root = choice(composed_roots)
+    if root in special_roots:
+        if root =='g':
+            vocal = choice(g_vocals)
+        else:
+            vocal = choice(qu_vocals)
+    else:
+        if randrange(1,100) < 80:
+            vocal = choice(normal_vocals)
+        else:
+            vocal = choice(diptongs)
+    if randrange(1,100) < 60:
+        tail = choice(tails)
+    else:
+        tail = ''
+    return root+vocal+tail
+
+
+for f in range(1,options.number):
+    word = ""
+    for syl in range(1,options.len):
+        word += syllab()
+        if options.do_salt:
+            if randrange(1,100) < options.salt_percent:
+                if options.salt_type == 'numeric':
+                    word += choice(numeric_salt)
+                elif options.salt_type == 'symbol':
+                    word += choice(symbol_salt)
+                else:
+                    word += choice(symbol_salt + numeric_salt)
+    word = word[:options.len]
+    if options.do_upper:
+        word = randcapitalize(word,options.upper_percent)
+    if options.do_leet:
+        l33t = randl337er(word,options.leet_percent)
+        print word + " -> " + l33t
+    else:
+        print word
+
+    

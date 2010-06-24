@@ -1,0 +1,71 @@
+SPPWGEN
+ 
+    A 'spanish friendly' password generator inspired in pwgen.
+
+    sppwgen generates pseudorandom passwords using an algorithm that creates 
+    a syllabic password wich somehow follow the spanish rules. 
+    
+    The result passwords are easily pronounced and easy to remember for even 
+    the duller spanish brains.
+
+    The algorithm can also add some symbolic or numeric salt between the 
+    syllabs to gain password strength.
+
+
+INSTALL
+    
+    use script directly or install system wide with:
+     
+      python setup.py install
+
+USAGE
+
+sppwgen [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -m LEN, --maxlenght=LEN
+                        Lenght of passwords
+  -n NUMBER             number of passwords to generate
+  -s, --salt            Add intersyllab salt
+  --salt-type=SALT_TYPE
+                        type of salt from numeric, symbol, both
+  --salt-percent=SALT_PERCENT
+                        Percent of have a character intersected each syllab
+  -l, --leet            post leet filter (p057 1337 {i[73r)
+  --leet-percent=LEET_PERCENT
+                        percent of have a suitable character
+                        leetscripted, note that leet scripted passwords my be
+                        longer than max length in raw characters as one normal
+                        character can be represented by several others
+  -u, --upercase        Percent of get a suitable character uppercased
+  --upercase-percent=UPPER_PERCENT
+                        Percent of get a suitable character uppercased
+
+MORE HELP ON FEATURES
+    
+    Password generation. 
+
+    Passwords are composed by syllabs. Syllabs in spanish follow several rules. 
+    Must have a vowel, there are only certain allowed starts, most of them a 
+    single consonant character. And there's only a few syllab endings. 
+    
+    Salt
+
+    Salt can add a number or a symbol between syllabs, the simbols are only the
+    accesible by the spanish default keyboard layout.
+
+    Upercase
+
+    Generated Passwords are lowcased, using upercase options can control the 
+    apperance of upercased ones
+
+    l33t Filter
+
+    Uses a dictionary to perform l33t substitutions. As many substitutions are
+    multi character this may break the password lenght.
+
+    100% l33t and password usability
+
+    Using 100% l33t password generation will return passwords which are hard to
+    remember and passwords with a reduced character set, so weaker passwords
